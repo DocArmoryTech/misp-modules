@@ -1,7 +1,35 @@
-# pyproject.toml
-[tool.pytest.ini_options]
-filterwarnings = [
-    "error",
-    "ignore::UserWarning",
-    "ignore::DeprecationWarning"
-]
+[tool.poetry]
+name = "misp-modules-website"
+version = "0.1.0"
+description = "Web application for MISP modules"
+authors = ["MISP Contributors <info@misp-project.org>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+flask = "*"
+sqlalchemy = "*"
+flask-session = "*"
+flask-sqlalchemy = "*"
+flask-wtf = "*"
+flask-migrate = "*"
+flask-login = "*"
+wtforms = "*"
+werkzeug = "3.0.6"
+flask-restx = "*"
+python-dateutil = "*"
+schedule = "*"
+gunicorn = "*"
+jsonschema = "*"
+requests = "*"
+
+[tool.poetry.scripts]
+dev-site = "main:main --dev"
+db-init = "main:main --db-init"
+db-migrate = "main:main --db-migrate"
+db-upgrade = "main:main --db-upgrade"
+db-downgrade = "main:main --db-downgrade"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,20 @@
+[Unit]
+Description=MISP modules website
+After=network.target misp-modules.service
+Requires=misp-modules.service
+
+[Service]
+Type=simple
+User=misp
+Group=misp
+WorkingDirectory=/home/misp/misp-modules/website
+Environment="PATH=/home/misp/.local/bin:/usr/bin"
+EnvironmentFile=/home/misp/misp-modules/website/.env
+ExecStart=/bin/bash -c "exec poetry run gunicorn -w 4 -b $FLASK_URL:$FLASK_PORT app_creation:app"
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/misp-modules-website_message.log
+StandardError=append:/var/log/misp-modules-website_error.log
+
+[Install]
+WantedBy=multi-user.target
