@@ -5,8 +5,10 @@ description = "Web application for MISP modules"
 authors = ["MISP Contributors <info@misp-project.org>"]
 readme = "README.md"
 packages = [
-  { include = "website" },
-  { include = "main.py", from = "." }
+  { include = "app" }        # importable package (has __init__.py)
+]
+include = [
+  "main.py"                  # loose module that isn’t inside a package
 ]
 
 [tool.poetry.dependencies]
