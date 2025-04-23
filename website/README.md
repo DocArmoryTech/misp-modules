@@ -53,8 +53,8 @@ nano .env
 
 ### `.env` Settings
 - `DATABASE_URI`: Database URL (default: `sqlite:///misp-module.sqlite`).
-- `SECRET_KEY`: Secure key for the Flask app (generate with `python -c "import secrets; print(secrets.token_hex(16))"`).
-- `FLASK_URL`: Host for the website (default: `0.0.0.0`).
+- `SECRET_KEY`: Secure key for the Flask app (generate with `python -c "import secrets; print(secrets.token_hex(16))"` or `openssl rand -hex 16`).
+- `FLASK_URL`: Host for the website (default: `127.0.0.1`).
 - `FLASK_PORT`: Port for the website (default: `7008`).
 - `MISP_MODULE`: URL and port of `misp-modules` (default: `127.0.0.1:6666`).
 - `ADMIN_PASSWORD`: Admin user password (optional in development, required in production).
@@ -67,7 +67,7 @@ Example `.env`:
 ```
 DATABASE_URI=sqlite:///misp-module.sqlite
 SECRET_KEY=your-secure-secret-key
-FLASK_URL=0.0.0.0
+FLASK_URL=127.0.0.1
 FLASK_PORT=7008
 MISP_MODULE=127.0.0.1:6666
 QUERIES_LIMIT=100
