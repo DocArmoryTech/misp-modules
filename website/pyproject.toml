@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Web application for MISP modules"
 authors = ["MISP Contributors <info@misp-project.org>"]
 readme = "README.md"
-package-mode = false
+packages = [
+  { include = "website" },
+  { include = "main.py", from = "." }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
