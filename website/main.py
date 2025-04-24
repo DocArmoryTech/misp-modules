@@ -41,13 +41,14 @@ def main():
             time.sleep(5)
 
         # Import utils after app creation to avoid circular imports
-        from app.utils import utils
+        from app.utils import admin_user_active, gen_admin_password, IS_DEVELOPMENT
+        from app.utils.init_modules import create_modules_db
 
-        utils.IS_DEVELOPMENT = True
+        IS_DEVELOPMENT = True  # Set global variable in utils.py
 
         try:
             print("Starting website in debug mode...")
-            app.run(host=app.config["FLASK_URL"], port=app.config["FLASK_PORT"], debug=utils.IS_DEVELOPMENT)
+            app.run(host=app.config["FLASK_URL"], port=app.config["FLASK_PORT"], debug=IS_DEVELOPMENT)
         finally:
             # Only parent created misp_proc
             if os.getenv("WERKZEUG_RUN_MAIN") != "true":
@@ -58,7 +59,8 @@ def main():
         app = create_app()
 
         # Import utils after app creation
-        from app.utils import create_modules_db, gen_admin_password
+        from app.utils import admin_user_active, gen_admin_password
+        from app.utils.init_modules import create_modules_db
 
         with app.app_context():
             db.create_all()
