@@ -27,14 +27,29 @@ def main():
         # Create app for debug mode
         app = create_app()
 
+            # Only the FIRST process (the parent) should launch misp‑modules
+        if os.getenv("WERKZEUG_RUN_MAIN") != "true":
+            print("Starting misp-modules...")
+
+            modules_env = os.environ.copy()
+            modules_env.pop("VIRTUAL_ENV", None)
+
+            misp_proc = subprocess.Popen(["poetry", "run", "misp-modules", "-l", "127.0.0.1"], cwd="..", env=modules_env)
+            time.sleep(5)
+
         # Import utils after app creation to avoid circular imports
         from app.utils import utils
-        from app.utils.init_modules import create_modules_db
-        from app.utils.utils import gen_admin_password
-
         utils.IS_DEVELOPMENT = True
-        print("Starting website in debug mode...")
-        app.run(host=app.config['FLASK_URL'], port=app.config['FLASK_PORT'], debug=utils.IS_DEVELOPMENT)
+
+
+        try:
+            print("Starting website in debug mode...")
+            app.run(host=app.config['FLASK_URL'], port=app.config['FLASK_PORT'], debug=utils.IS_DEVELOPMENT)
+        finally:
+            # Only parent created misp_proc
+            if os.getenv("WERKZEUG_RUN_MAIN") != "true":
+                misp_proc.terminate()
+
     elif args.db_init:
         # Create app for database initialization
         app = create_app()
