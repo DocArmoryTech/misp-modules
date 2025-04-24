@@ -1,4 +1,4 @@
-from ..db_class.db import User
+from app.models import User
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from .form import LoginForm
 from flask_login import (
@@ -8,7 +8,6 @@ from flask_login import (
     current_user
 )
 from ..utils.utils import admin_password
-from ..db_class.db import User
 from app import db
 
 account_blueprint = Blueprint(

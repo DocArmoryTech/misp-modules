@@ -1,5 +1,5 @@
 from app import db
-from ..db_class.db import *
+from app.models import *
 
 
 def get_tool(tool_id):

@@ -3,7 +3,7 @@ import json
 import requests
 from .utils.utils import isUUID, query_get_module
 from app import db
-from .db_class.db import History, Module, Config, Module_Config, Session_db, History_Tree
+from app.models import History, Module, Config, Module_Config, Session_db, History_Tree
 from flask import session as sess
 from sqlalchemy import desc
 

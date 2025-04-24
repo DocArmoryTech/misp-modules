@@ -27,7 +27,7 @@ def main():
         # Create app for debug mode
         app = create_app()
 
-            # Only the FIRST process (the parent) should launch misp‑modules
+        # Only the FIRST process (the parent) should launch misp‑modules
         if os.getenv("WERKZEUG_RUN_MAIN") != "true":
             print("Starting misp-modules...")
 

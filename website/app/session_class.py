@@ -7,8 +7,8 @@ from .utils.utils import query_post_query, query_get_module, get_object, get_lim
 from . import home_core as HomeModel
 import uuid
 from app import db
-from .db_class.db import History, History_Tree, Session_db
-from flask import session as sess 
+from app.models import History, History_Tree, Session_db
+from flask import session as sess
 
 sessions = list()
 
