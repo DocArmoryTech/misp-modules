@@ -1,7 +1,7 @@
 import json
 
 from app import db
-from app.modles import Config, Module, Module_Config
+from app.models import Config, Module, Module_Config
 from app.utils import query_get_module
 
 
