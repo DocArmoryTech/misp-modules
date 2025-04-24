@@ -1,7 +1,7 @@
 import json
 
 from app import db
-from app.modules import History, History_Tree, Session_db
+from app.models import History, History_Tree, Session_db
 from app.utils import isUUID
 from flask import session as sess
 from sqlalchemy import desc
