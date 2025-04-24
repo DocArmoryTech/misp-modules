@@ -6,7 +6,7 @@ from uuid import uuid4
 from .utils.utils import query_post_query, query_get_module, get_object, get_limit_queries
 from . import home_core as HomeModel
 import uuid
-from . import db
+from app import db
 from .db_class.db import History, History_Tree, Session_db
 from flask import session as sess 
 

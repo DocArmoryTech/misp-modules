@@ -50,4 +50,9 @@ def create_app():
     app.register_blueprint(external_tools_blueprint, url_prefix="/")
     csrf.exempt(home_blueprint)
 
+    # Register 404 error handler
+    @app.errorhandler(404)
+    def error_page_not_found(e):
+        return render_template('404.html'), 404
+
     return app

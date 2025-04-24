@@ -6,7 +6,6 @@ import time
 from flask import render_template
 from dotenv import load_dotenv
 from app import create_app, db
-from app.utils import utils
 
 # Load environment variables from .env
 load_dotenv()
@@ -21,45 +20,43 @@ def main():
     parser.add_argument("--db-downgrade", action="store_true", help="Revert the latest database migration")
     args = parser.parse_args()
 
-    # Create the app only when needed
-    app = create_app()
-
-    # Import utils after app creation to avoid circular imports
-    from app.utils.init_modules import create_modules_db
-    from app.utils.utils import gen_admin_password
-
-    # Register 404 error handler
-    @app.errorhandler(404)
-    def error_page_not_found(e):
-        return render_template('404.html'), 404
+    # Set FLASK_APP for flask db commands
+    os.environ["FLASK_APP"] = "app:create_app()"
 
     if args.dev:
+        # Create app for debug mode
+        app = create_app()
+
+        # Import utils after app creation to avoid circular imports
+        from app.utils import utils
+        from app.utils.init_modules import create_modules_db
+        from app.utils.utils import gen_admin_password
+
         utils.IS_DEVELOPMENT = True
-        print("Starting misp-modules...")
-        misp_proc = subprocess.Popen(["poetry", "run", "misp-modules", "-l", "127.0.0.1"], cwd="..")
-        time.sleep(2)  # Wait for misp-modules to initialize
         print("Starting website in debug mode...")
-        app.run(host=app.config['FLASK_URL'], port=app.config['FLASK_PORT'], debug=True)
-        try:
-            misp_proc.wait()
-        except KeyboardInterrupt:
-            print("Stopping development environment...")
-            misp_proc.terminate()
+        app.run(host=app.config['FLASK_URL'], port=app.config['FLASK_PORT'], debug=utils.IS_DEVELOPMENT)
     elif args.db_init:
+        # Create app for database initialization
+        app = create_app()
+
+        # Import utils after app creation
+        from app.utils.init_modules import create_modules_db
+        from app.utils.utils import gen_admin_password
+
         with app.app_context():
             db.create_all()
             create_modules_db()
             gen_admin_password()
             print("Database initialized.")
     elif args.db_migrate:
-        with app.app_context():
-            subprocess.run(["flask", "db", "migrate"])
+        # Run flask db migrate without creating app
+        subprocess.run(["flask", "db", "migrate"])
     elif args.db_upgrade:
-        with app.app_context():
-            subprocess.run(["flask", "db", "upgrade"])
+        # Run flask db upgrade without creating app
+        subprocess.run(["flask", "db", "upgrade"])
     elif args.db_downgrade:
-        with app.app_context():
-            subprocess.run(["flask", "db", "downgrade"])
+        # Run flask db downgrade without creating app
+        subprocess.run(["flask", "db", "downgrade"])
     else:
         parser.print_help()
 

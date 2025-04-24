@@ -1,6 +1,6 @@
 import json
 from ..utils.utils import isUUID
-from .. import db
+from app import db
 from ..db_class.db import History,  Session_db, History_Tree
 from flask import session as sess
 from sqlalchemy import desc

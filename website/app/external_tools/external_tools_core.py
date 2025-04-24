@@ -1,4 +1,4 @@
-from .. import db
+from app import db
 from ..db_class.db import *
 
 

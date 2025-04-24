@@ -1,6 +1,6 @@
 import json
 import os
-from ..db_class.db import db
+from app import db
 from ..db_class.db import Module, Config, Module_Config
 from .utils import query_get_module
 
@@ -42,4 +42,4 @@ def create_modules_db():
                         db.session.add(mc)
                         db.session.commit()
     else:
-        print("[-] Error in misp-modules. It might not running.")
+        print("[-] Error contact misp-modules. Please ensure it's running.")

@@ -9,7 +9,7 @@ from flask_login import (
 )
 from ..utils.utils import admin_password
 from ..db_class.db import User
-from .. import db
+from app import db
 
 account_blueprint = Blueprint(
     'account',
