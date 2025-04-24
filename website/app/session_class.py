@@ -3,7 +3,7 @@ import json
 from queue import Queue
 from threading import Thread
 from uuid import uuid4
-from .utils.utils import query_post_query, query_get_module, get_object, get_limit_queries
+from app.utils import query_post_query, query_get_module, get_object, get_limit_queries
 from . import home_core as HomeModel
 import uuid
 from app import db

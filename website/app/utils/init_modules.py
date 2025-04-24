@@ -2,7 +2,7 @@ import json
 import os
 from app import db
 from app.modles import Module, Config, Module_Config
-from .utils import query_get_module
+from app.utils import query_get_module
 
 
 def create_modules_db():

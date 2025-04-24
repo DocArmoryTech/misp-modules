@@ -7,7 +7,7 @@ from flask_login import (
     logout_user,
     current_user
 )
-from ..utils.utils import admin_password
+from app.utils import admin_password
 from app import db
 
 account_blueprint = Blueprint(

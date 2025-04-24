@@ -1,6 +1,6 @@
 import json
 from flask import Blueprint, render_template, request, jsonify, redirect, session as sess
-from ..utils.utils import admin_user_active
+from app.utils import admin_user_active
 from . import external_tools_core as ToolModel
 from .form import ExternalToolForm
 

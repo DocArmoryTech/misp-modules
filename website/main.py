@@ -55,8 +55,7 @@ def main():
         app = create_app()
 
         # Import utils after app creation
-        from app.utils.init_modules import create_modules_db
-        from app.utils.utils import gen_admin_password
+        from app.utils import create_modules_db, gen_admin_password
 
         with app.app_context():
             db.create_all()

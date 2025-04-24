@@ -5,7 +5,7 @@ from flask_login import current_user
 import requests
 from . import session_class as SessionModel
 from . import home_core as HomeModel
-from .utils.utils import admin_user_active
+from app.utils import admin_user_active
 from .external_tools import external_tools_core as ToolModel
 
 home_blueprint = Blueprint(

@@ -1,7 +1,7 @@
 import json
 
 import requests
-from .utils.utils import isUUID, query_get_module
+from app.utils import isUUID, query_get_module
 from app import db
 from app.models import History, Module, Config, Module_Config, Session_db, History_Tree
 from flask import session as sess

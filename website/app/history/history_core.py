@@ -1,5 +1,5 @@
 import json
-from ..utils.utils import isUUID
+from app.utils import isUUID
 from app import db
 from app.modules import History, Session_db, History_Tree
 from flask import session as sess

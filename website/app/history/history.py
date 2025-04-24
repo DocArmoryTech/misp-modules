@@ -1,7 +1,7 @@
 import json
 from flask import Flask, Blueprint, render_template, request, jsonify, session as sess
 from . import history_core as HistoryModel
-from ..utils.utils import admin_user_active
+from app.utils import admin_user_active
 
 history_blueprint = Blueprint(
     'history',
