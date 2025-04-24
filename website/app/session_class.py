@@ -1,16 +1,19 @@
 import datetime
 import json
+import uuid
 from queue import Queue
 from threading import Thread
 from uuid import uuid4
-from app.utils import query_post_query, query_get_module, get_object, get_limit_queries
-from . import home_core as HomeModel
-import uuid
+
 from app import db
 from app.models import History, History_Tree, Session_db
+from app.utils import get_limit_queries, get_object, query_get_module, query_post_query
 from flask import session as sess
 
+from . import home_core as HomeModel
+
 sessions = list()
+
 
 class Session_class:
     def __init__(self, request_json, query_as_same=False, parent_id=None) -> None:
@@ -28,7 +31,6 @@ class Session_class:
         self.config_module = self.config_module_setter(request_json, query_as_same, parent_id)
         self.query_date = datetime.datetime.now(tz=datetime.timezone.utc)
 
-    
     def util_config_as_same(self, child, parent_id):
         if child["uuid"] == parent_id:
             return child["config"]
@@ -36,7 +38,6 @@ class Session_class:
             for c in child["children"]:
                 return self.util_config_as_same(c, parent_id)
 
-    
     def config_module_setter(self, request_json, query_as_same, parent_id):
         """Setter for config for all modules used"""
         flag = False
@@ -69,7 +70,7 @@ class Session_class:
             for j in self.modules_list:
                 self.jobs.put((cp, i, j))
                 cp += 1
-        #need the index and the url in each queue item.
+        # need the index and the url in each queue item.
         for _ in range(self.thread_count):
             worker = Thread(target=self.process)
             worker.daemon = True
@@ -87,14 +88,14 @@ class Session_class:
         registered = len(self.result)
 
         return {
-            'id': self.uuid,
-            'total': total,
-            'complete': complete,
-            'remaining': remaining,
-            'registered': registered,
-            'stopped' : self.stopped,
-            "nb_errors": self.nb_errors
-            }
+            "id": self.uuid,
+            "total": total,
+            "complete": complete,
+            "remaining": remaining,
+            "registered": registered,
+            "stopped": self.stopped,
+            "nb_errors": self.nb_errors,
+        }
 
     def stop(self):
         """Stop the current queue and worker"""
@@ -119,17 +120,13 @@ class Session_class:
             for module in modules:
                 if module["name"] == work[2]:
                     if "format" in module["mispattributes"]:
-                        loc_query = {
-                            "type": self.input_query,
-                            "value": work[1],
-                            "uuid": str(uuid.uuid4())
-                        }
+                        loc_query = {"type": self.input_query, "value": work[1], "uuid": str(uuid.uuid4())}
                     break
-            
+
             loc_config = {}
             if work[2] in self.config_module:
                 loc_config = self.config_module[work[2]]
-                
+
             if loc_query:
                 send_to = {"module": work[2], "attribute": loc_query, "config": loc_config}
             else:
@@ -145,20 +142,20 @@ class Session_class:
                             if loc_obj:
                                 for attr in obj["Attribute"]:
                                     attr["ui-priority"] = loc_obj["attributes"][attr["object_relation"]]["ui-priority"]
-                                
+
                                 # After adding 'ui-priority'
                                 obj["Attribute"].sort(key=lambda x: x["ui-priority"], reverse=True)
-                    
+
             if res and "error" in res:
                 self.nb_errors += 1
             self.result[work[1]][work[2]] = res
 
             self.jobs.task_done()
         return True
-    
+
     def get_result(self):
         return self.result
-    
+
     def save_info(self):
         """Save info in the db"""
         s = Session_db(
@@ -169,19 +166,17 @@ class Session_class:
             config_module=json.dumps(self.config_module),
             result=json.dumps(self.result),
             nb_errors=self.nb_errors,
-            query_date=self.query_date
+            query_date=self.query_date,
         )
         db.session.add(s)
         db.session.commit()
 
-        h = History(
-            session_id=s.id
-        )
+        h = History(session_id=s.id)
         db.session.add(h)
         db.session.commit()
 
         histories = History.query.all()
-        
+
         while len(histories) > get_limit_queries():
             history = History.query.order_by(History.id).all()
             session = Session_db.query.filter_by(id=history[0].session_id)

@@ -1,16 +1,15 @@
 import json
-from app.utils import isUUID
+
 from app import db
-from app.modules import History, Session_db, History_Tree
+from app.modules import History, History_Tree, Session_db
+from app.utils import isUUID
 from flask import session as sess
 from sqlalchemy import desc
-
 
 
 def get_session(sid):
     """Return a session by uuid"""
     return Session_db.query.filter_by(uuid=sid).first()
-
 
 
 def get_history(page):
@@ -42,6 +41,7 @@ def get_history_session():
 
     return loc_list
 
+
 def get_current_query_history():
     current_query = sess.get("current_query")
     if current_query:
@@ -59,9 +59,6 @@ def get_history_session_uuid(history_uuid):
             if q == history_uuid:
                 return q_value
     return {}
-
-
-
 
 
 def util_save_history(session):
@@ -83,23 +80,19 @@ def save_history_core(sid):
         if not history_tree_db:
             # Get all children before add to db
             loc_dict = util_save_history(session)
-            h = History_Tree(
-                session_uuid = session["uuid"],
-                tree=json.dumps(loc_dict)
-            )
+            h = History_Tree(session_uuid=session["uuid"], tree=json.dumps(loc_dict))
             db.session.add(h)
             db.session.commit()
-            return {"message": "History Save", 'toast_class': "success-subtle"}
+            return {"message": "History Save", "toast_class": "success-subtle"}
         # Save same session but with new value
         elif not json.loads(history_tree_db.tree) == session:
             # Get all children before add to db
             loc_dict = util_save_history(session)
             history_tree_db.tree = json.dumps(loc_dict)
             db.session.commit()
-            return {"message": "History updated", 'toast_class': "success-subtle"}
-        return {"message": "History already saved", 'toast_class': "warning-subtle"}
-    return {"message": "Session not found", 'toast_class': "danger-subtle"}
-
+            return {"message": "History updated", "toast_class": "success-subtle"}
+        return {"message": "History already saved", "toast_class": "warning-subtle"}
+    return {"message": "Session not found", "toast_class": "danger-subtle"}
 
 
 def util_get_history_tree(child):
@@ -111,6 +104,7 @@ def util_get_history_tree(child):
         for s_child in child[loc_child]:
             loc_json["children"].append(util_get_history_tree(s_child))
     return loc_json
+
 
 def get_history_tree():
     """Return all histories saved as tree"""
@@ -125,7 +119,6 @@ def get_history_tree():
             loc_json["children"].append(util_get_history_tree(child))
         loc_dict.append(loc_json)
     return loc_dict
-
 
 
 def get_history_tree_uuid(history_uuid):
@@ -150,6 +143,7 @@ def util_remove_node_session(node_uuid, parent, parent_path):
         elif "children" in child and child["children"]:
             return util_remove_node_session(node_uuid, child, parent_path["children"][i])
 
+
 def remove_node_session(node_uuid):
     keys_list = list(sess.keys())
     loc = None
@@ -165,7 +159,6 @@ def remove_node_session(node_uuid):
                     break
     if loc:
         del sess[keys_list[i]]
-
 
 
 def util_remove_node_tree(node_uuid, parent, parent_path):

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-import os
 import argparse
+import os
 import subprocess
 import time
-from flask import render_template
-from dotenv import load_dotenv
+
 from app import create_app, db
+from dotenv import load_dotenv
+from flask import render_template
 
 # Load environment variables from .env
 load_dotenv()
+
 
 # CLI commands using argparse
 def main():
@@ -34,17 +36,19 @@ def main():
             modules_env = os.environ.copy()
             modules_env.pop("VIRTUAL_ENV", None)
 
-            misp_proc = subprocess.Popen(["poetry", "run", "misp-modules", "-l", "127.0.0.1"], cwd="..", env=modules_env)
+            misp_proc = subprocess.Popen(
+                ["poetry", "run", "misp-modules", "-l", "127.0.0.1"], cwd="..", env=modules_env
+            )
             time.sleep(5)
 
         # Import utils after app creation to avoid circular imports
         from app.utils import utils
-        utils.IS_DEVELOPMENT = True
 
+        utils.IS_DEVELOPMENT = True
 
         try:
             print("Starting website in debug mode...")
-            app.run(host=app.config['FLASK_URL'], port=app.config['FLASK_PORT'], debug=utils.IS_DEVELOPMENT)
+            app.run(host=app.config["FLASK_URL"], port=app.config["FLASK_PORT"], debug=utils.IS_DEVELOPMENT)
         finally:
             # Only parent created misp_proc
             if os.getenv("WERKZEUG_RUN_MAIN") != "true":
@@ -73,6 +77,7 @@ def main():
         subprocess.run(["flask", "db", "downgrade"])
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()

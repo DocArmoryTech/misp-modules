@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
+import json
 import os
 import random
 import uuid
-import json
-import requests
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
 
 # Load environment variables from .env
 load_dotenv()
 
 # Cache environment variables at module load time
-MISP_MODULE = os.getenv('MISP_MODULE', '127.0.0.1:6666')
-QUERIES_LIMIT = int(os.getenv('QUERIES_LIMIT', '100'))
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', '')
+MISP_MODULE = os.getenv("MISP_MODULE", "127.0.0.1:6666")
+QUERIES_LIMIT = int(os.getenv("QUERIES_LIMIT", "100"))
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
 
 # Global variables
 MODULES = []
 IS_DEVELOPMENT = False  # Set by main.py or inferred from environment
 
-def query_get_module(headers={'Content-type': 'application/json'}):
+
+def query_get_module(headers={"Content-type": "application/json"}):
     global MODULES
     if not MODULES:
         try:
@@ -33,7 +35,8 @@ def query_get_module(headers={'Content-type': 'application/json'}):
     else:
         return MODULES
 
-def query_post_query(data, headers={'Content-type': 'application/json'}):
+
+def query_post_query(data, headers={"Content-type": "application/json"}):
     try:
         r = requests.post(f"http://{MISP_MODULE}/query", data=json.dumps(data), headers=headers)
     except ConnectionError:
@@ -42,12 +45,14 @@ def query_post_query(data, headers={'Content-type': 'application/json'}):
         return {"message": str(e)}
     return r.json()
 
+
 def isUUID(uid):
     try:
         uuid.UUID(str(uid))
         return True
     except ValueError:
         return False
+
 
 def get_object(obj_name):
     path = Path(os.getcwd())
@@ -59,21 +64,25 @@ def get_object(obj_name):
         return loc_json
     return False
 
+
 def admin_user_active():
     return bool(ADMIN_PASSWORD)
 
+
 def admin_password():
     return ADMIN_PASSWORD
+
 
 def gen_admin_password():
     if ADMIN_PASSWORD:
         return ADMIN_PASSWORD
     if not IS_DEVELOPMENT:
         raise ValueError("ADMIN_PASSWORD must be set in .env for production")
-    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@$%#[]+-:;_&*().,?0123456789'
-    password = ''.join(random.choice(chars) for _ in range(20))
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@$%#[]+-:;_&*().,?0123456789"
+    password = "".join(random.choice(chars) for _ in range(20))
     print(f"##########################\n##    Admin password    ##\n## {password} ##\n##########################")
     return password
+
 
 def get_limit_queries():
     return QUERIES_LIMIT
