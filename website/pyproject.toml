@@ -1,14 +1,58 @@
+# pyproject.toml
+[build-system]
+requires      = ["poetry-core>=1.9.0"]   # need ≥1.8 for PEP 621 support
+build-backend = "poetry.core.masonry.api"
+
+########################
+# Project metadata     #
+########################
+[project]
+name            = "misp-modules-website"
+version         = "0.1.0"
+description     = "Web application for MISP modules"
+readme          = "README.md"
+requires-python = ">=3.9"
+authors = [
+  { name = "MISP Contributors", email = "info@misp-project.org" },
+]
+
+# Runtime dependencies
+dependencies = [
+  "flask",
+  "sqlalchemy",
+  "flask-session",
+  "flask-sqlalchemy",
+  "flask-wtf",
+  "flask-migrate",
+  "flask-login",
+  "wtforms",
+  "werkzeug",
+  "flask-restx",
+  "python-dateutil",
+  "schedule",
+  "gunicorn",
+  "jsonschema",
+  "requests",
+  "python-dotenv",   # package is called python‑dotenv on PyPI
+]
+
+# Entry‑point commands
+[project.scripts]
+dev-site      = "main:main --dev"
+db-init       = "main:main --db-init"
+db-migrate    = "main:main --db-migrate"
+db-upgrade    = "main:main --db-upgrade"
+db-downgrade  = "main:main --db-downgrade"
+
+########################
+# Poetry‑specific bits #
+########################
 [tool.poetry]
-name = "misp-modules-website"
-version = "0.1.0"
-description = "Web application for MISP modules"
-authors = ["MISP Contributors <info@misp-project.org>"]
-readme = "README.md"
 packages = [
-  { include = "app" }        # importable package (has __init__.py)
+  { include = "app" }
 ]
 include = [
-  "main.py"                  # loose module that isn’t inside a package
+  "main.py"
 ]
 
 [tool.poetry.dependencies]
@@ -21,22 +65,12 @@ flask-wtf = "*"
 flask-migrate = "*"
 flask-login = "*"
 wtforms = "*"
-werkzeug = "3.0.6"
+werkzeug = "*"
 flask-restx = "*"
 python-dateutil = "*"
 schedule = "*"
 gunicorn = "*"
 jsonschema = "*"
 requests = "*"
-dotenv = "^0.9.9"
+dotenv = "*"
 
-[tool.poetry.scripts]
-dev-site = "main:main --dev"
-db-init = "main:main --db-init"
-db-migrate = "main:main --db-migrate"
-db-upgrade = "main:main --db-upgrade"
-db-downgrade = "main:main --db-downgrade"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
