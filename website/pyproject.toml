@@ -28,6 +28,7 @@ schedule = "*"
 gunicorn = "*"
 jsonschema = "*"
 requests = "*"
+dotenv = "^0.9.9"
 
 [tool.poetry.scripts]
 dev-site = "main:main --dev"
