@@ -1,7 +1,6 @@
 import ast
 import json
 
-import requests
 from app.utils import admin_user_active
 from flask import Blueprint, jsonify, render_template, request
 from flask import session as sess

@@ -6,7 +6,6 @@ import time
 
 from app import create_app, db
 from dotenv import load_dotenv
-from flask import render_template
 
 # Load environment variables from .env
 load_dotenv()

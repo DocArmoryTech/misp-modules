@@ -2,7 +2,7 @@ import json
 
 import requests
 from app import db
-from app.models import Config, History, History_Tree, Module, Module_Config, Session_db
+from app.models import Config, History, Module, Module_Config, Session_db
 from app.utils import isUUID, query_get_module
 from flask import session as sess
 from sqlalchemy import desc
@@ -46,7 +46,7 @@ def get_session(sid):
 def get_modules():
     """Return all modules for expansion and hover types"""
     res = query_get_module()
-    if not "message" in res:
+    if "message" not in res:
         loc_list = list()
         for module in res:
             module_db = get_module_by_name(module["name"])
@@ -54,7 +54,7 @@ def get_modules():
             module_loc["request_on_query"] = module_db.request_on_query
             if module_db.is_active:
                 if "expansion" in module["meta"]["module-type"] or "hover" in module["meta"]["module-type"]:
-                    if not module_loc in loc_list:
+                    if module_loc not in loc_list:
                         loc_list.append(module_loc)
         loc_list.sort(key=lambda x: x["name"])
         return loc_list
@@ -65,7 +65,7 @@ def util_get_attr(module, loc_list):
     """Additional algo for get_list_misp_attributes"""
     if "input" in module["mispattributes"]:
         for input in module["mispattributes"]["input"]:
-            if not input in loc_list:
+            if input not in loc_list:
                 loc_list.append(input)
     return loc_list
 
@@ -73,7 +73,7 @@ def util_get_attr(module, loc_list):
 def get_list_misp_attributes():
     """Return all types of attributes used in expansion and hover"""
     res = query_get_module()
-    if not "message" in res:
+    if "message" not in res:
         loc_list = list()
 
         for module in res:
@@ -212,7 +212,7 @@ def util_set_flask_session(parent_id, loc_session, current_session):
 
 def deep_explore(session_dict, parent_id, current_session):
     for loc_session in session_dict:
-        if not "children" in loc_session:
+        if "children" not in loc_session:
             loc_session["children"] = list()
         if util_set_flask_session(parent_id, loc_session, current_session):
             return True
@@ -225,17 +225,17 @@ def set_flask_session(current_session, parent_id):
         if not current_query or current_query not in sess:
             create_new_session_tree(current_session, parent_id)
         else:
-            ## Check in current query
+            # Check in current query
             loc_session = sess.get(current_query)
-            if not "children" in loc_session:
+            if "children" not in loc_session:
                 loc_session["children"] = list()
-            ## If not in current query, current query change for an other one
+            # If not in current query, current query change for an other one
             if not util_set_flask_session(parent_id, loc_session, current_session):
                 # sess["uuid"]
                 for q in sess:
                     if isUUID(q) and not q == current_query:
                         loc_session = sess.get(q)
-                        if not "children" in loc_session:
+                        if "children" not in loc_session:
                             loc_session["children"] = list()
                         if util_set_flask_session(parent_id, loc_session, current_session):
                             sess["current_query"] = q

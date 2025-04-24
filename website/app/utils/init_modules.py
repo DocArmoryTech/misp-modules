@@ -1,5 +1,4 @@
 import json
-import os
 
 from app import db
 from app.modles import Config, Module, Module_Config

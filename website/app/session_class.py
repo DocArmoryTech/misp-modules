@@ -54,7 +54,7 @@ class Session_class:
                             return res
         if not flag:
             for query in self.modules_list:
-                if not query in request_json["config"]:
+                if query not in request_json["config"]:
                     request_json["config"][query] = {}
                     module = HomeModel.get_module_by_name(query)
                     mcs = HomeModel.get_module_config_module(module.id)
@@ -133,7 +133,7 @@ class Session_class:
                 send_to = {"module": work[2], self.input_query: work[1], "config": loc_config}
             res = query_post_query(send_to)
 
-            ## Sort attr in object by ui-priority
+            # Sort attr in object by ui-priority
             if res:
                 if "results" in res:
                     if "Object" in res["results"]:
