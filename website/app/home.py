@@ -15,10 +15,9 @@ home_blueprint = Blueprint("home", __name__, template_folder="templates", static
 
 @home_blueprint.route("/", methods=["GET", "POST"])
 def home():
-    try:
+    if "query" in sess:
         del sess["query"]
-    except:
-        pass
+
     sess["admin_user"] = bool(admin_user_active())
     if "query" in request.args:
         sess["query"] = ast.literal_eval(request.args.get("query"))
@@ -37,10 +36,9 @@ def get_query():
 
 @home_blueprint.route("/home/<sid>", methods=["GET", "POST"])
 def home_query(sid):
-    try:
+    if "query" in sess:
         del sess["query"]
-    except:
-        pass
+
     sess["admin_user"] = admin_user_active()
     if "query" in request.args:
         sess["query"] = [request.args.get("query")]

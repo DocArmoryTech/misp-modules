@@ -7,7 +7,7 @@ from app.utils import query_get_module
 
 def create_modules_db():
     modules = query_get_module()
-    if not "message" in modules:
+    if "message" not in modules:
         for module in modules:
             m = Module.query.filter_by(name=module["name"]).first()
             input_attr = ""

@@ -41,7 +41,7 @@ def main():
             time.sleep(5)
 
         # Import utils after app creation to avoid circular imports
-        from app.utils import admin_user_active, gen_admin_password, IS_DEVELOPMENT
+        from app.utils import gen_admin_password, IS_DEVELOPMENT
         from app.utils.init_modules import create_modules_db
 
         IS_DEVELOPMENT = True  # Set global variable in utils.py
@@ -59,7 +59,7 @@ def main():
         app = create_app()
 
         # Import utils after app creation
-        from app.utils import admin_user_active, gen_admin_password
+        from app.utils import gen_admin_password
         from app.utils.init_modules import create_modules_db
 
         with app.app_context():
