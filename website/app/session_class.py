@@ -5,10 +5,11 @@ from queue import Queue
 from threading import Thread
 from uuid import uuid4
 
+from flask import session as sess
+
 from app import db
 from app.models import History, History_Tree, Session_db
 from app.utils import get_limit_queries, get_object, query_get_module, query_post_query
-from flask import session as sess
 
 from . import home_core as HomeModel
 
@@ -28,7 +29,9 @@ class Session_class:
         self.input_query = request_json["input"]
         self.modules_list = request_json["modules"]
         self.nb_errors = 0
-        self.config_module = self.config_module_setter(request_json, query_as_same, parent_id)
+        self.config_module = self.config_module_setter(
+            request_json, query_as_same, parent_id
+        )
         self.query_date = datetime.datetime.now(tz=datetime.timezone.utc)
 
     def util_config_as_same(self, child, parent_id):
@@ -120,7 +123,11 @@ class Session_class:
             for module in modules:
                 if module["name"] == work[2]:
                     if "format" in module["mispattributes"]:
-                        loc_query = {"type": self.input_query, "value": work[1], "uuid": str(uuid.uuid4())}
+                        loc_query = {
+                            "type": self.input_query,
+                            "value": work[1],
+                            "uuid": str(uuid.uuid4()),
+                        }
                     break
 
             loc_config = {}
@@ -128,9 +135,17 @@ class Session_class:
                 loc_config = self.config_module[work[2]]
 
             if loc_query:
-                send_to = {"module": work[2], "attribute": loc_query, "config": loc_config}
+                send_to = {
+                    "module": work[2],
+                    "attribute": loc_query,
+                    "config": loc_config,
+                }
             else:
-                send_to = {"module": work[2], self.input_query: work[1], "config": loc_config}
+                send_to = {
+                    "module": work[2],
+                    self.input_query: work[1],
+                    "config": loc_config,
+                }
             res = query_post_query(send_to)
 
             # Sort attr in object by ui-priority
@@ -141,10 +156,14 @@ class Session_class:
                             loc_obj = get_object(obj["name"])
                             if loc_obj:
                                 for attr in obj["Attribute"]:
-                                    attr["ui-priority"] = loc_obj["attributes"][attr["object_relation"]]["ui-priority"]
+                                    attr["ui-priority"] = loc_obj["attributes"][
+                                        attr["object_relation"]
+                                    ]["ui-priority"]
 
                                 # After adding 'ui-priority'
-                                obj["Attribute"].sort(key=lambda x: x["ui-priority"], reverse=True)
+                                obj["Attribute"].sort(
+                                    key=lambda x: x["ui-priority"], reverse=True
+                                )
 
             if res and "error" in res:
                 self.nb_errors += 1

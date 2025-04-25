@@ -1,16 +1,19 @@
 import ast
 import json
 
-from app.utils import admin_user_active
 from flask import Blueprint, jsonify, render_template, request
 from flask import session as sess
 from flask_login import current_user
+
+from app.utils import admin_user_active
 
 from . import home_core as HomeModel
 from . import session_class as SessionModel
 from .external_tools import external_tools_core as ToolModel
 
-home_blueprint = Blueprint("home", __name__, template_folder="templates", static_folder="static")
+home_blueprint = Blueprint(
+    "home", __name__, template_folder="templates", static_folder="static"
+)
 
 
 @home_blueprint.route("/", methods=["GET", "POST"])
@@ -134,11 +137,15 @@ def run_modules():
             if "modules" in request.json:
                 if "query_as_same" in request.json:
                     session = SessionModel.Session_class(
-                        request.json, query_as_same=True, parent_id=request.json["parent_id"]
+                        request.json,
+                        query_as_same=True,
+                        parent_id=request.json["parent_id"],
                     )
                 elif "query_as_params" in request.json:
                     session = SessionModel.Session_class(
-                        request.json, query_as_same=True, parent_id=request.json["same_query_id"]
+                        request.json,
+                        query_as_same=True,
+                        parent_id=request.json["same_query_id"],
                     )
                 else:
                     session = SessionModel.Session_class(request.json)
@@ -191,9 +198,14 @@ def download(sid):
                     return (
                         jsonify(loc[query][module]),
                         200,
-                        {"Content-Disposition": f"attachment; filename={query}-{module}.json"},
+                        {
+                            "Content-Disposition": f"attachment; filename={query}-{module}.json"
+                        },
                     )
-            return {"message": "Module not in result", "toast_class": "danger-subtle"}, 400
+            return {
+                "message": "Module not in result",
+                "toast_class": "danger-subtle",
+            }, 400
         else:
             for s in SessionModel.sessions:
                 if s.uuid == sid:
@@ -202,9 +214,14 @@ def download(sid):
                         return (
                             jsonify(s.result[module]),
                             200,
-                            {"Content-Disposition": f"attachment; filename={s.query}-{module}.json"},
+                            {
+                                "Content-Disposition": f"attachment; filename={s.query}-{module}.json"
+                            },
                         )
-                    return {"message": "Module not in result ", "toast_class": "danger-subtle"}, 400
+                    return {
+                        "message": "Module not in result ",
+                        "toast_class": "danger-subtle",
+                    }, 400
         return {"message": "Session not found", "toast_class": "danger-subtle"}, 404
     return {"message": "Need to pass a module", "toast_class": "warning-subtle"}, 400
 
@@ -248,9 +265,18 @@ def change_config():
         if "module_name" in request.json["result_dict"]:
             res = HomeModel.change_config_core(request.json["result_dict"])
             if res:
-                return {"message": "Config changed", "toast_class": "success-subtle"}, 200
-            return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
-        return {"message": 'Need to pass "module_name"', "toast_class": "warning-subtle"}, 400
+                return {
+                    "message": "Config changed",
+                    "toast_class": "success-subtle",
+                }, 200
+            return {
+                "message": "Something went wrong",
+                "toast_class": "danger-subtle",
+            }, 400
+        return {
+            "message": 'Need to pass "module_name"',
+            "toast_class": "warning-subtle",
+        }, 400
     return {"message": "Permission denied", "toast_class": "danger-subtle"}, 403
 
 
@@ -267,9 +293,18 @@ def change_status():
         if "module_id" in request.args:
             res = HomeModel.change_status_core(request.args.get("module_id"))
             if res:
-                return {"message": "Module status changed", "toast_class": "success-subtle"}, 200
-            return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
-        return {"message": 'Need to pass "module_id"', "toast_class": "warning-subtle"}, 400
+                return {
+                    "message": "Module status changed",
+                    "toast_class": "success-subtle",
+                }, 200
+            return {
+                "message": "Something went wrong",
+                "toast_class": "danger-subtle",
+            }, 400
+        return {
+            "message": 'Need to pass "module_id"',
+            "toast_class": "warning-subtle",
+        }, 400
     return {"message": "Permission denied", "toast_class": "danger-subtle"}, 403
 
 
@@ -285,6 +320,9 @@ def submit_external_tool():
     if flag:
         ext = ToolModel.get_tool(request.json["external_tool_id"])
         if HomeModel.submit_external_tool(request.json["results"], ext):
-            return {"message": f"Send to {ext.name} successfully", "toast_class": "success-subtle"}, 200
+            return {
+                "message": f"Send to {ext.name} successfully",
+                "toast_class": "success-subtle",
+            }, 200
         return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Permission denied", "toast_class": "danger-subtle"}, 403

@@ -1,10 +1,13 @@
-from app.utils import admin_user_active
 from flask import Blueprint, render_template, request
 from flask import session as sess
 
+from app.utils import admin_user_active
+
 from . import history_core as HistoryModel
 
-history_blueprint = Blueprint("history", __name__, template_folder="templates", static_folder="static")
+history_blueprint = Blueprint(
+    "history", __name__, template_folder="templates", static_folder="static"
+)
 
 
 @history_blueprint.route("/history", methods=["GET"])

@@ -35,7 +35,12 @@ def change_config_core(request_json):
 
 
 def add_tool_core(form_dict):
-    tool = ExternalTools(name=form_dict["name"], url=form_dict["url"], api_key=form_dict["api_key"], is_active=True)
+    tool = ExternalTools(
+        name=form_dict["name"],
+        url=form_dict["url"],
+        api_key=form_dict["api_key"],
+        is_active=True,
+    )
     db.session.add(tool)
     db.session.commit()
     return True

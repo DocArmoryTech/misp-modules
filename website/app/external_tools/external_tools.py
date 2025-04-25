@@ -1,11 +1,14 @@
-from app.utils import admin_user_active
 from flask import Blueprint, redirect, render_template, request
 from flask import session as sess
+
+from app.utils import admin_user_active
 
 from . import external_tools_core as ToolModel
 from .form import ExternalToolForm
 
-external_tools_blueprint = Blueprint("external_tools", __name__, template_folder="templates", static_folder="static")
+external_tools_blueprint = Blueprint(
+    "external_tools", __name__, template_folder="templates", static_folder="static"
+)
 
 
 @external_tools_blueprint.route("/external_tools", methods=["GET"])
@@ -31,7 +34,9 @@ def add_external_tool():
     return render_template("external_tools/add_external_tool.html", form=form)
 
 
-@external_tools_blueprint.route("/external_tools/<tid>/delete_tool", methods=["GET", "POST"])
+@external_tools_blueprint.route(
+    "/external_tools/<tid>/delete_tool", methods=["GET", "POST"]
+)
 def delete_tool(tid):
     """Delete a tool"""
     if ToolModel.get_tool(tid):
@@ -41,29 +46,63 @@ def delete_tool(tid):
     return {"message": "Tool not found", "toast_class": "danger-subtle"}, 404
 
 
-@external_tools_blueprint.route("/external_tools/change_status", methods=["GET", "POST"])
+@external_tools_blueprint.route(
+    "/external_tools/change_status", methods=["GET", "POST"]
+)
 def change_status():
     """Active or disabled a tool"""
     if "tool_id" in request.args:
         res = ToolModel.change_status_core(request.args.get("tool_id"))
         if res:
-            return {"message": "Tool status changed", "toast_class": "success-subtle"}, 200
+            return {
+                "message": "Tool status changed",
+                "toast_class": "success-subtle",
+            }, 200
         return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": 'Need to pass "tool_id"', "toast_class": "warning-subtle"}, 400
 
 
-@external_tools_blueprint.route("/external_tools/change_config", methods=["GET", "POST"])
+@external_tools_blueprint.route(
+    "/external_tools/change_config", methods=["GET", "POST"]
+)
 def change_config():
     """Change configuration for a tool"""
-    if "tool_id" in request.json["result_dict"] and request.json["result_dict"]["tool_id"]:
-        if "tool_name" in request.json["result_dict"] and request.json["result_dict"]["tool_name"]:
-            if "tool_url" in request.json["result_dict"] and request.json["result_dict"]["tool_url"]:
-                if "tool_api_key" in request.json["result_dict"] and request.json["result_dict"]["tool_api_key"]:
+    if (
+        "tool_id" in request.json["result_dict"]
+        and request.json["result_dict"]["tool_id"]
+    ):
+        if (
+            "tool_name" in request.json["result_dict"]
+            and request.json["result_dict"]["tool_name"]
+        ):
+            if (
+                "tool_url" in request.json["result_dict"]
+                and request.json["result_dict"]["tool_url"]
+            ):
+                if (
+                    "tool_api_key" in request.json["result_dict"]
+                    and request.json["result_dict"]["tool_api_key"]
+                ):
                     res = ToolModel.change_config_core(request.json["result_dict"])
                     if res:
-                        return {"message": "Config changed", "toast_class": "success-subtle"}, 200
-                    return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
-                return {"message": 'Need to pass "tool_api_key"', "toast_class": "warning-subtle"}, 400
-            return {"message": 'Need to pass "tool_url"', "toast_class": "warning-subtle"}, 400
-        return {"message": 'Need to pass "tool_name"', "toast_class": "warning-subtle"}, 400
+                        return {
+                            "message": "Config changed",
+                            "toast_class": "success-subtle",
+                        }, 200
+                    return {
+                        "message": "Something went wrong",
+                        "toast_class": "danger-subtle",
+                    }, 400
+                return {
+                    "message": 'Need to pass "tool_api_key"',
+                    "toast_class": "warning-subtle",
+                }, 400
+            return {
+                "message": 'Need to pass "tool_url"',
+                "toast_class": "warning-subtle",
+            }, 400
+        return {
+            "message": 'Need to pass "tool_name"',
+            "toast_class": "warning-subtle",
+        }, 400
     return {"message": 'Need to pass "tool_id"', "toast_class": "warning-subtle"}, 400

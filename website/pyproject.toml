@@ -74,3 +74,12 @@ jsonschema = "*"
 requests = "*"
 dotenv = "*"
 
+################
+# linting bits #
+################
+[tool.black]
+exclude = "migrations"
+
+[tool.isort]
+profile = "black"
+skip = ["migrations"]

@@ -1,12 +1,15 @@
-from app import db
-from app.models import User
-from app.utils import admin_password
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from app import db
+from app.models import User
+from app.utils import admin_password
+
 from .form import LoginForm
 
-account_blueprint = Blueprint("account", __name__, template_folder="templates", static_folder="static")
+account_blueprint = Blueprint(
+    "account", __name__, template_folder="templates", static_folder="static"
+)
 
 
 @account_blueprint.route("/login", methods=["GET", "POST"])
@@ -15,7 +18,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         if form.password.data == str(admin_password()):
-            user = User(email="admin@admin.admin", first_name="admin", last_name="admin")
+            user = User(
+                email="admin@admin.admin", first_name="admin", last_name="admin"
+            )
             db.session.add(user)
             db.session.commit()
             login_user(user, form.remember_me.data)

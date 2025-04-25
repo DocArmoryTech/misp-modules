@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
-from flask import render_template
 
 db = SQLAlchemy()
 csrf = CSRFProtect()
@@ -20,10 +19,14 @@ def create_app():
     app = Flask(__name__)
 
     # Configure app from environment variables
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI", "sqlite:///misp-module.sqlite")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+        "DATABASE_URI", "sqlite:///misp-module.sqlite"
+    )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SESSION_TYPE"] = os.getenv("SESSION_TYPE", "sqlalchemy")
-    app.config["SESSION_SQLALCHEMY_TABLE"] = os.getenv("SESSION_SQLALCHEMY_TABLE", "flask_sessions")
+    app.config["SESSION_SQLALCHEMY_TABLE"] = os.getenv(
+        "SESSION_SQLALCHEMY_TABLE", "flask_sessions"
+    )
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     app.config["FLASK_URL"] = os.getenv("FLASK_URL", "127.0.0.1")
     app.config["FLASK_PORT"] = int(os.getenv("FLASK_PORT", "7008"))

@@ -1,11 +1,12 @@
 import json
 
 import requests
+from flask import session as sess
+from sqlalchemy import desc
+
 from app import db
 from app.models import Config, History, Module, Module_Config, Session_db
 from app.utils import isUUID, query_get_module
-from flask import session as sess
-from sqlalchemy import desc
 
 
 def get_module(mid):
@@ -53,7 +54,10 @@ def get_modules():
             module_loc = module
             module_loc["request_on_query"] = module_db.request_on_query
             if module_db.is_active:
-                if "expansion" in module["meta"]["module-type"] or "hover" in module["meta"]["module-type"]:
+                if (
+                    "expansion" in module["meta"]["module-type"]
+                    or "hover" in module["meta"]["module-type"]
+                ):
                     if module_loc not in loc_list:
                         loc_list.append(module_loc)
         loc_list.sort(key=lambda x: x["name"])
@@ -78,7 +82,10 @@ def get_list_misp_attributes():
 
         for module in res:
             if get_module_by_name(module["name"]).is_active:
-                if "expansion" in module["meta"]["module-type"] or "hover" in module["meta"]["module-type"]:
+                if (
+                    "expansion" in module["meta"]["module-type"]
+                    or "hover" in module["meta"]["module-type"]
+                ):
                     loc_list = util_get_attr(module, loc_list)
         loc_list.sort()
         return loc_list
@@ -126,7 +133,11 @@ def change_status_core(module_id):
 
 
 def submit_external_tool(results, ext_tool):
-    headers = {"Content-Type": "application/json", "X-API-KEY": ext_tool.api_key, "Origin": "misp-module"}
+    headers = {
+        "Content-Type": "application/json",
+        "X-API-KEY": ext_tool.api_key,
+        "Origin": "misp-module",
+    }
     response = requests.post(ext_tool.url, json={"results": results}, headers=headers)
     if response.status_code == 200:
         return True
@@ -237,7 +248,9 @@ def set_flask_session(current_session, parent_id):
                         loc_session = sess.get(q)
                         if "children" not in loc_session:
                             loc_session["children"] = list()
-                        if util_set_flask_session(parent_id, loc_session, current_session):
+                        if util_set_flask_session(
+                            parent_id, loc_session, current_session
+                        ):
                             sess["current_query"] = q
                             flag = False
                             break

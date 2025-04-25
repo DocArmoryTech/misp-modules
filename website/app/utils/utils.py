@@ -38,7 +38,9 @@ def query_get_module(headers={"Content-type": "application/json"}):
 
 def query_post_query(data, headers={"Content-type": "application/json"}):
     try:
-        r = requests.post(f"http://{MISP_MODULE}/query", data=json.dumps(data), headers=headers)
+        r = requests.post(
+            f"http://{MISP_MODULE}/query", data=json.dumps(data), headers=headers
+        )
     except ConnectionError:
         return {"message": "Instance of misp-modules is unreachable"}
     except Exception as e:
@@ -59,7 +61,9 @@ def get_object(obj_name):
     parent_path = path.parent.absolute()
     loc_path = os.path.join(parent_path, "misp-objects", "objects")
     if os.path.isdir(loc_path):
-        with open(os.path.join(loc_path, obj_name, "definition.json"), "r") as read_json:
+        with open(
+            os.path.join(loc_path, obj_name, "definition.json"), "r"
+        ) as read_json:
             loc_json = json.load(read_json)
         return loc_json
     return False
@@ -80,7 +84,9 @@ def gen_admin_password():
         raise ValueError("ADMIN_PASSWORD must be set in .env for production")
     chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@$%#[]+-:;_&*().,?0123456789"
     password = "".join(random.choice(chars) for _ in range(20))
-    print(f"##########################\n##    Admin password    ##\n## {password} ##\n##########################")
+    print(
+        f"##########################\n##    Admin password    ##\n## {password} ##\n##########################"
+    )
     return password
 
 
